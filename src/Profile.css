@@ -1,0 +1,32 @@
+div,
+input,
+textarea {
+	box-sizing: border-box;
+}
+.main-background {
+	width: 100%;
+	background-color: #f7f9fc;
+	padding-top: 80px;
+	padding-bottom: 80px;
+}
+.white-box {
+	background-color: white;
+	box-sizing: border-box;
+	border-radius: 10px;
+}
+a {
+	text-decoration: none;
+}
+.f-grey {
+	color: dimgray;
+}
+.f-blue {
+	color: blue;
+}
+.custom-border {
+	border-bottom: 3px solid;
+	border-color: lightgrey;
+}
+img {
+	width: 100%;
+}
