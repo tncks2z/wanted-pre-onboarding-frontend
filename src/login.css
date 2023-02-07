@@ -2,3 +2,8 @@ button {
 	width: 49%;
 	box-sizing: border-box;
 }
+.invalid-input {
+	margin-left: 10px;
+	color: red;
+	font-size: smaller;
+}
