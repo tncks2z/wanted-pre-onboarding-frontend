@@ -1,8 +1,11 @@
 import { Container, Button, Form } from 'react-bootstrap';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css';
 
 function Signup() {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [emailError, setEmailError] = useState(false);
@@ -18,7 +21,7 @@ function Signup() {
 
 	// userPassword 유효성 검사
 	const onChangePassword = (e) => {
-		const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+		const passwordRegex = /^(?=.*[A-Za-z0-9])[A-Za-z0-9]{8,}$$/;
 		if (!e.target.value || passwordRegex.test(e.target.value)) setPasswordError(false);
 		else setPasswordError(true);
 		setPassword(e.target.value);
@@ -35,8 +38,20 @@ function Signup() {
 		}
 	};
 	// submit
-	const onSubmit = (e) => {
-		if (validation()) return;
+	const onSubmit = () => {
+		if (validation()) {
+			axios
+				.post('https://pre-onboarding-selection-task.shop/auth/signup', {
+					email: email,
+					password: password,
+				})
+				.then((res) => {
+					localStorage.setItem('token', res.data.access_token);
+					alert('회원가입에 성공했습니다!');
+					navigate('/signin');
+				})
+				.catch((err) => alert(err));
+		}
 	};
 	return (
 		<Container>
@@ -67,7 +82,7 @@ function Signup() {
 				<Button
 					className='w-100'
 					variant='primary'
-					type='submit'
+					type='button'
 					data-testid='signup-button'
 					onClick={onSubmit}
 					disabled={!(email && password)}>
