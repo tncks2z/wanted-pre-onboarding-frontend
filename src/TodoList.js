@@ -1,14 +1,31 @@
 import './Todo.css';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 let todoItemId = 0;
+const token = localStorage.getItem('token');
 const TodoItemInputField = (props) => {
 	const [input, setInput] = useState('');
 	const onSubmit = () => {
 		props.onSubmit(input);
 		setInput('');
+		axios('https://pre-onboarding-selection-task.shop/todos', {
+			method: 'post',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				todo: input,
+			},
+		})
+			.then((res) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 	return (
 		<Form className='mt-5 d-flex mb-5'>
@@ -31,32 +48,31 @@ const TodoItemInputField = (props) => {
 	);
 };
 const TodoItem = (props) => {
-	const style = props.todoItem.isFinished ? { textDecoration: 'line-through' } : {};
+	const style = props.todoItem.isCompleted ? { textDecoration: 'line-through' } : {};
 	return (
 		<li>
-			<Row xs={7}>
+			<Row>
 				<Col xs={1}>
-					<input className='me-2' type='checkbox' name='' onClick={() => props.onTodoCheckClick(props.todoItem)} />
-				</Col>
-				<Col xs={3} className='text-center'>
-					<span className='me-2' style={style}>
-						{props.todoItem.todoItemContent}
-					</span>
+					<input
+						type='checkbox'
+						onChange={() => props.onTodoCheckClick(props.todoItem)}
+						checked={props.todoItem.isCompleted}
+					/>
 				</Col>
 				<Col xs={2}>
-					<Button
-						variant='outline-primary'
-						size='sm'
-						className='btn-todo-danger'
-						onClick={() => props.onRemoveClick(props.todoItem)}>
+					<span style={style}>{props.todoItem.todo}</span>
+				</Col>
+				<Col xs={1}>
+					<Button variant='outline-primary' size='sm' className='btn-todo-danger' data-testid='modify-button'>
 						수정
 					</Button>
 				</Col>
-				<Col xs={2}>
+				<Col xs={1}>
 					<Button
 						variant='outline-danger'
 						size='sm'
 						className='btn-todo-danger'
+						data-testid='delete-button'
 						onClick={() => props.onRemoveClick(props.todoItem)}>
 						삭제
 					</Button>
@@ -85,13 +101,23 @@ const TodoItemList = (props) => {
 
 function MakeTodo() {
 	const [todoItemList, setTodoItemList] = useState([]);
+	useEffect(() => {
+		axios('https://pre-onboarding-selection-task.shop/todos', {
+			method: 'get',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}).then((res) => {
+			setTodoItemList(res.data);
+		});
+	}, []);
 	const onSubmit = (newTodoItem) => {
 		setTodoItemList([
 			...todoItemList,
 			{
 				id: todoItemId++,
-				todoItemContent: newTodoItem,
-				isFinished: false,
+				todo: newTodoItem,
+				isCompleted: false,
 			},
 		]);
 	};
@@ -99,10 +125,26 @@ function MakeTodo() {
 		setTodoItemList(
 			todoItemList.map((todoItem) => {
 				if (clickedTodoItem.id === todoItem.id) {
+					axios(`https://pre-onboarding-selection-task.shop/todos/${clickedTodoItem.id}`, {
+						method: 'put',
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						data: {
+							todo: clickedTodoItem.todo,
+							isCompleted: !clickedTodoItem.isCompleted,
+						},
+					})
+						.then((res) => {
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
 					return {
 						id: clickedTodoItem.id,
-						todoItemContent: clickedTodoItem.todoItemContent,
-						isFinished: !clickedTodoItem.isFinished,
+						todo: clickedTodoItem.todo,
+						isCompleted: !clickedTodoItem.isCompleted,
 					};
 				} else {
 					return todoItem;
@@ -113,6 +155,14 @@ function MakeTodo() {
 	const onRemoveClick = (removedTodoItem) => {
 		setTodoItemList(
 			todoItemList.filter((todoItem) => {
+				axios(`https://pre-onboarding-selection-task.shop/todos/${removedTodoItem.id}`, {
+					method: 'delete',
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}).then((res) => {
+					console.log(res);
+				});
 				return todoItem.id !== removedTodoItem.id;
 			})
 		);

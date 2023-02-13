@@ -1,10 +1,10 @@
 .btn-todo-primary {
-	width: 10%;
+	width: 5%;
 }
 .btn-todo-danger {
 	width: 100%;
 }
 input[type='text'] {
-	width: 50%;
+	width: 35%;
 	margin-right: 10px;
 }

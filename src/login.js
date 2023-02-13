@@ -58,10 +58,15 @@ function Login() {
 					<Form.Check type='checkbox' label='로그인 상태 유지' />
 				</Form.Group>
 				<div className='d-flex justify-content-between'>
-					<Button variant='primary' type='button' disabled={!(email && password)} onClick={onSubmit}>
+					<Button
+						variant='primary'
+						type='button'
+						data-testid='signin-button'
+						disabled={!(email && password)}
+						onClick={onSubmit}>
 						로그인
 					</Button>
-					<Button variant='outline-primary' type='button' onClick={goSignup}>
+					<Button variant='outline-primary' data-testid='signup-button' type='button' onClick={goSignup}>
 						회원가입
 					</Button>
 				</div>
