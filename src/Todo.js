@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
-import { Container, Form } from 'react-bootstrap';
+import { Button, Container, Form } from 'react-bootstrap';
 import './Todo.css';
 
 const Todo = () => {
 	const [input, setInput] = useState('');
 	const [todos, setTodos] = useState([]);
 	const [nextId, setNextId] = useState(0);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editedTodo, setEditedTodo] = useState('');
 	const inputName = useRef(null);
 
 	const onChange = (e) => {
@@ -22,13 +24,11 @@ const Todo = () => {
 		setInput('');
 	};
 
-	//삭제 이벤트 함수
 	const removeTodo = (id) => {
 		const about_todos = todos.filter((todo) => todo.id !== id);
 		setTodos(about_todos);
 	};
 
-	//수정 이벤트 함수
 	const modifyTodo = (id) => {
 		todos.map((todo) => {
 			if (todo.id === id) {
@@ -41,25 +41,25 @@ const Todo = () => {
 	};
 	const input_todo = todos.map((todo) => (
 		<li key={todo.id}>
-			<label>
-				<input type='checkbox' />
-				<span>{todo.text}</span>
+			<label className='mt-5'>
+				<input type='checkbox' className='me-2' />
+				<span className='me-2'>{todo.text}</span>
 			</label>
-			<button data-testid='modify-button' onClick={() => modifyTodo(todo.id)}>
+			<Button variant='outline-primary' size='sm' data-testid='modify-button' onClick={() => modifyTodo(todo.id)}>
 				수정
-			</button>
-			<button data-testid='delete-button' onClick={() => removeTodo(todo.id)}>
+			</Button>
+			<Button variant='outline-danger' size='sm' data-testid='delete-button' onClick={() => removeTodo(todo.id)}>
 				삭제
-			</button>
+			</Button>
 		</li>
 	));
 	return (
 		<Container>
-			<Form className='mt-5'>
-				<input name='todo' type='text' value={input} onChange={onChange} ref={inputName} />
-				<button type='button' onClick={addTodo}>
+			<Form className='mt-5 d-flex'>
+				<Form.Control name='todo' type='text' value={input} onChange={onChange} ref={inputName} />
+				<Button variant='primary' type='button' onClick={addTodo}>
 					추가
-				</button>
+				</Button>
 			</Form>
 			<ul>{input_todo}</ul>
 		</Container>

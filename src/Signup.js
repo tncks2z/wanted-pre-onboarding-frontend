@@ -50,7 +50,7 @@ function Signup() {
 					alert('회원가입에 성공했습니다!');
 					navigate('/signin');
 				})
-				.catch((err) => alert(err));
+				.catch((err) => alert(err.data.message));
 		}
 	};
 	return (
