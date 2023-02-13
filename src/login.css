@@ -1,4 +1,5 @@
 button {
+	width: 45%;
 	box-sizing: border-box;
 }
 .invalid-input {

@@ -26,22 +26,18 @@ function Login() {
 		setPassword(e.target.value);
 	};
 	const navigate = useNavigate();
-	const goTodo = () => {
-		navigate('/todo');
-	};
 	const goSignup = () => {
 		navigate('/signup');
 	};
 	const onSubmit = () => {
 		axios
 			.post('https://pre-onboarding-selection-task.shop/auth/signin', {
-				email: email,
-				password: password,
+				email,
+				password,
 			})
 			.then((res) => {
 				localStorage.setItem('token', res.data.access_token);
 				alert('로그인에 성공했습니다!');
-				goTodo();
 			})
 			.catch((err) => {
 				alert(err);
@@ -62,10 +58,10 @@ function Login() {
 					<Form.Check type='checkbox' label='로그인 상태 유지' />
 				</Form.Group>
 				<div className='d-flex justify-content-between'>
-					<Button className='w-50' variant='primary' type='button' disabled={!(email && password)} onClick={onSubmit}>
+					<Button variant='primary' type='button' disabled={!(email && password)} onClick={onSubmit}>
 						로그인
 					</Button>
-					<Button className='w-50' variant='outline-primary' type='button' onClick={goSignup}>
+					<Button variant='outline-primary' type='button' onClick={goSignup}>
 						회원가입
 					</Button>
 				</div>

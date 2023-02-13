@@ -42,11 +42,10 @@ function Signup() {
 		if (validation()) {
 			axios
 				.post('https://pre-onboarding-selection-task.shop/auth/signup', {
-					email: email,
-					password: password,
+					email,
+					password,
 				})
 				.then((res) => {
-					localStorage.setItem('token', res.data.access_token);
 					alert('회원가입에 성공했습니다!');
 					navigate('/signin');
 				})

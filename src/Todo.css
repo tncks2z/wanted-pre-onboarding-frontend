@@ -1,5 +1,8 @@
-button {
-	width: 8%;
+.btn-todo-primary {
+	width: 10%;
+}
+.btn-todo-danger {
+	width: 100%;
 }
 input[type='text'] {
 	width: 50%;
