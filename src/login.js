@@ -38,7 +38,7 @@ function Login() {
 			.then((res) => {
 				localStorage.setItem('token', res.data.access_token);
 				alert('로그인에 성공했습니다!');
-				document.location.href = '/';
+				document.location.href = '/todo';
 			})
 			.catch((err) => {
 				alert(err);
