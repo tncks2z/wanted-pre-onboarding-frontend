@@ -8,7 +8,7 @@ import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 
 function App() {
-	const access = localStorage.getItem('token');
+	const access = !!localStorage.getItem('token');
 	return (
 		<div className='App'>
 			<React.Fragment>

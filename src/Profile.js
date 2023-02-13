@@ -16,6 +16,10 @@ function Profile() {
 	const goLogin = () => {
 		navigate('/signin');
 	};
+	const goTodo = () => {
+		navigate('/todo');
+	};
+	const token = localStorage.getItem('token');
 
 	return (
 		<div className='main-background'>
@@ -30,9 +34,15 @@ function Profile() {
 						<div className='f-blue d-flex'>
 							<p>{myAddress}</p>
 						</div>
-						<button className='btn btn-primary w-50' onClick={goLogin}>
-							로그인
-						</button>
+						{token ? (
+							<button className='btn btn-primary w-50' onClick={goTodo}>
+								ToDo 보러가기
+							</button>
+						) : (
+							<button className='btn btn-primary w-50' onClick={goLogin}>
+								로그인 하러가기
+							</button>
+						)}
 					</Col>
 					<Col lg={1} className='border-start'></Col>
 					<Col lg={2} className='text-end text-lg-start p-3 mt-5'>
