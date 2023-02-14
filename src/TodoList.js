@@ -60,7 +60,7 @@ const TodoItem = (props) => {
 	};
 
 	const onNewSubmit = () => {
-		props.onNewSubmit(newInput);
+		props.onNewSubmit(props.todoItem, newInput);
 		setNewInput('');
 		axios(`https://pre-onboarding-selection-task.shop/todos/${props.todoItem.id}`, {
 			method: 'put',
@@ -74,6 +74,7 @@ const TodoItem = (props) => {
 		})
 			.then((res) => {
 				console.log(res.data);
+				setIsEdidted(false);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -93,7 +94,13 @@ const TodoItem = (props) => {
 				</Col>
 				<Col xs={2}>
 					{isEdited ? (
-						<input type='text' className='w-100' value={newInput} onChange={(e) => setNewInput(e.target.value)} />
+						<input
+							type='text'
+							className='w-100'
+							data-testid='modify-input'
+							value={newInput}
+							onChange={(e) => setNewInput(e.target.value)}
+						/>
 					) : (
 						<span style={style}>{props.todoItem.todo}</span>
 					)}
@@ -104,7 +111,7 @@ const TodoItem = (props) => {
 							variant='outline-primary'
 							size='sm'
 							className='btn-todo-danger'
-							data-testid='modify-button'
+							data-testid='submit-button'
 							onClick={onNewSubmit}>
 							제출
 						</Button>
@@ -126,7 +133,7 @@ const TodoItem = (props) => {
 							variant='outline-danger'
 							size='sm'
 							className='btn-todo-danger'
-							data-testid='delete-button'
+							data-testid='cancel-button'
 							onClick={() => onCancelClick(props.todoItem)}>
 							취소
 						</Button>
@@ -189,25 +196,25 @@ function MakeTodo() {
 		]);
 	};
 	const onTodoCheckClick = (clickedTodoItem) => {
+		axios(`https://pre-onboarding-selection-task.shop/todos/${clickedTodoItem.id}`, {
+			method: 'put',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			data: {
+				todo: clickedTodoItem.todo,
+				isCompleted: !clickedTodoItem.isCompleted,
+			},
+		})
+			.then((res) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 		setTodoItemList(
 			todoItemList.map((todoItem) => {
 				if (clickedTodoItem.id === todoItem.id) {
-					axios(`https://pre-onboarding-selection-task.shop/todos/${clickedTodoItem.id}`, {
-						method: 'put',
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-						data: {
-							todo: clickedTodoItem.todo,
-							isCompleted: !clickedTodoItem.isCompleted,
-						},
-					})
-						.then((res) => {
-							console.log(res.data);
-						})
-						.catch((err) => {
-							console.log(err);
-						});
 					return {
 						id: clickedTodoItem.id,
 						todo: clickedTodoItem.todo,
@@ -220,43 +227,28 @@ function MakeTodo() {
 		);
 	};
 	const onRemoveClick = (removedTodoItem) => {
+		axios(`https://pre-onboarding-selection-task.shop/todos/${removedTodoItem.id}`, {
+			method: 'delete',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		}).then((res) => {
+			console.log(res);
+		});
 		setTodoItemList(
 			todoItemList.filter((todoItem) => {
-				axios(`https://pre-onboarding-selection-task.shop/todos/${removedTodoItem.id}`, {
-					method: 'delete',
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				}).then((res) => {
-					console.log(res);
-				});
 				return todoItem.id !== removedTodoItem.id;
 			})
 		);
 	};
-	const onNewSubmit = (modifiedTodoItem) => {
+	const onNewSubmit = (modifiedTodoItem, newInput) => {
 		setTodoItemList(
 			todoItemList.map((todoItem) => {
 				if (modifiedTodoItem.id === todoItem.id) {
-					axios(`https://pre-onboarding-selection-task.shop/todos/${modifiedTodoItem.id}`, {
-						method: 'put',
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-						data: {
-							todo: modifiedTodoItem.todo,
-							isCompleted: modifiedTodoItem.isCompleted,
-						},
-					})
-						.then((res) => {
-							console.log(res.data);
-						})
-						.catch((err) => {
-							console.log(err);
-						});
+					console.log('이거 됨');
 					return {
 						id: modifiedTodoItem.id,
-						todo: modifiedTodoItem.todo,
+						todo: newInput,
 						isCompleted: modifiedTodoItem.isCompleted,
 					};
 				} else {
