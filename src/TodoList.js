@@ -2,7 +2,6 @@ import './Todo.css';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { render } from '@testing-library/react';
 
 let todoItemId = 0;
 const token = localStorage.getItem('token');
