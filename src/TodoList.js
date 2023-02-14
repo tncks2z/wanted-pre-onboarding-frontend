@@ -48,9 +48,41 @@ const TodoItemInputField = (props) => {
 	);
 };
 const TodoItem = (props) => {
+	const [newInput, setNewInput] = useState('');
+	const [isEdited, setIsEdidted] = useState(false);
+
+	const onModifyClick = () => {
+		setIsEdidted(true);
+	};
+
+	const onCancelClick = () => {
+		setIsEdidted(false);
+	};
+
+	const onNewSubmit = () => {
+		props.onNewSubmit(newInput);
+		setNewInput('');
+		axios(`https://pre-onboarding-selection-task.shop/todos/${props.todoItem.id}`, {
+			method: 'put',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			data: {
+				todo: newInput,
+				isCompleted: false,
+			},
+		})
+			.then((res) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	const style = props.todoItem.isCompleted ? { textDecoration: 'line-through' } : {};
 	return (
-		<li>
+		<li className='mb-2'>
 			<Row>
 				<Col xs={1}>
 					<input
@@ -60,22 +92,54 @@ const TodoItem = (props) => {
 					/>
 				</Col>
 				<Col xs={2}>
-					<span style={style}>{props.todoItem.todo}</span>
+					{isEdited ? (
+						<input type='text' className='w-100' value={newInput} onChange={(e) => setNewInput(e.target.value)} />
+					) : (
+						<span style={style}>{props.todoItem.todo}</span>
+					)}
 				</Col>
 				<Col xs={1}>
-					<Button variant='outline-primary' size='sm' className='btn-todo-danger' data-testid='modify-button'>
-						수정
-					</Button>
+					{isEdited ? (
+						<Button
+							variant='outline-primary'
+							size='sm'
+							className='btn-todo-danger'
+							data-testid='modify-button'
+							onClick={onNewSubmit}>
+							제출
+						</Button>
+					) : (
+						<Button
+							variant='outline-primary'
+							size='sm'
+							className='btn-todo-danger'
+							data-testid='modify-button'
+							disabled={props.todoItem.isCompleted}
+							onClick={() => onModifyClick(props.todoItem)}>
+							수정
+						</Button>
+					)}
 				</Col>
 				<Col xs={1}>
-					<Button
-						variant='outline-danger'
-						size='sm'
-						className='btn-todo-danger'
-						data-testid='delete-button'
-						onClick={() => props.onRemoveClick(props.todoItem)}>
-						삭제
-					</Button>
+					{isEdited ? (
+						<Button
+							variant='outline-danger'
+							size='sm'
+							className='btn-todo-danger'
+							data-testid='delete-button'
+							onClick={() => onCancelClick(props.todoItem)}>
+							취소
+						</Button>
+					) : (
+						<Button
+							variant='outline-danger'
+							size='sm'
+							className='btn-todo-danger'
+							data-testid='delete-button'
+							onClick={() => props.onRemoveClick(props.todoItem)}>
+							삭제
+						</Button>
+					)}
 				</Col>
 			</Row>
 		</li>
@@ -89,6 +153,9 @@ const TodoItemList = (props) => {
 				todoItem={todoItem}
 				onTodoCheckClick={props.onTodoCheckClick}
 				onRemoveClick={props.onRemoveClick}
+				onNewSubmit={props.onNewSubmit}
+				onModifyClick={props.onModifyClick}
+				onCancelClick={props.onCancelClick}
 			/>
 		);
 	});
@@ -167,11 +234,46 @@ function MakeTodo() {
 			})
 		);
 	};
-
+	const onNewSubmit = (modifiedTodoItem) => {
+		setTodoItemList(
+			todoItemList.map((todoItem) => {
+				if (modifiedTodoItem.id === todoItem.id) {
+					axios(`https://pre-onboarding-selection-task.shop/todos/${modifiedTodoItem.id}`, {
+						method: 'put',
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+						data: {
+							todo: modifiedTodoItem.todo,
+							isCompleted: modifiedTodoItem.isCompleted,
+						},
+					})
+						.then((res) => {
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+					return {
+						id: modifiedTodoItem.id,
+						todo: modifiedTodoItem.todo,
+						isCompleted: modifiedTodoItem.isCompleted,
+					};
+				} else {
+					return todoItem;
+				}
+			})
+		);
+	};
 	return (
 		<Container>
 			<TodoItemInputField onSubmit={onSubmit} />
-			<TodoItemList todoItemList={todoItemList} onTodoCheckClick={onTodoCheckClick} onRemoveClick={onRemoveClick} />
+			<TodoItemList
+				todoItemList={todoItemList}
+				onTodoCheckClick={onTodoCheckClick}
+				onRemoveClick={onRemoveClick}
+				onNewSubmit={onNewSubmit}
+			/>
 		</Container>
 	);
 }
