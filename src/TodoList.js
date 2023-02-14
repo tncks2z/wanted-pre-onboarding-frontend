@@ -2,6 +2,7 @@ import './Todo.css';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { render } from '@testing-library/react';
 
 let todoItemId = 0;
 const token = localStorage.getItem('token');
@@ -22,6 +23,7 @@ const TodoItemInputField = (props) => {
 		})
 			.then((res) => {
 				console.log(res.data);
+				props.renderTodos();
 			})
 			.catch((err) => {
 				console.log(err);
@@ -175,7 +177,7 @@ const TodoItemList = (props) => {
 
 function MakeTodo() {
 	const [todoItemList, setTodoItemList] = useState([]);
-	useEffect(() => {
+	const renderTodos = () => {
 		axios('https://pre-onboarding-selection-task.shop/todos', {
 			method: 'get',
 			headers: {
@@ -184,7 +186,11 @@ function MakeTodo() {
 		}).then((res) => {
 			setTodoItemList(res.data);
 		});
+	};
+	useEffect(() => {
+		renderTodos();
 	}, []);
+
 	const onSubmit = (newTodoItem) => {
 		setTodoItemList([
 			...todoItemList,
@@ -245,7 +251,6 @@ function MakeTodo() {
 		setTodoItemList(
 			todoItemList.map((todoItem) => {
 				if (modifiedTodoItem.id === todoItem.id) {
-					console.log('이거 됨');
 					return {
 						id: modifiedTodoItem.id,
 						todo: newInput,
@@ -259,7 +264,7 @@ function MakeTodo() {
 	};
 	return (
 		<Container>
-			<TodoItemInputField onSubmit={onSubmit} />
+			<TodoItemInputField onSubmit={onSubmit} renderTodos={renderTodos} />
 			<TodoItemList
 				todoItemList={todoItemList}
 				onTodoCheckClick={onTodoCheckClick}
