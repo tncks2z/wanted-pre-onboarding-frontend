@@ -12,5 +12,5 @@
 
 ### 데모영상
 
-영상은 Tistory에 별도로 기재를 했습니다. 올린 URL로 확인해주시면 감사하겠습니다.
+영상은 Tistory에 별도로 기재한 글을 URL로 확인해주시면 감사하겠습니다.
 https://ddudeveloper.tistory.com/3
